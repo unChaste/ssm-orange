@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.toya.dao.UserDao">
+    <insert id="save" keyProperty="id" useGeneratedKeys="true">
+        insert into user (username, password, nickname, gender, createTime, updateTime)
+        value(#{username}, #{password}, #{nickname}, #{gender}, now(), now())
+    </insert>
+    <delete id="deleteById">
+        delete from user where id = #{id}
+    </delete>
+    <update id="update">
+        update user
+        <set>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            updateTime = now()
+        </set>
+        where id = #{id}
+    </update>
+    <select id="listAll" resultType="io.toya.entity.User">
+        select * from user
+        <where>
+            <if test="nickname != null">
+                nickname like '%' #{nickname} '%'
+            </if>
+        </where>
+    </select>
+    <select id="getById" resultType="io.toya.entity.User">
+        select * from user where id = #{id}
+    </select>
+</mapper>
