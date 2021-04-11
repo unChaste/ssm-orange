@@ -1,5 +1,6 @@
 package io.toya.controller;
 
+import com.alibaba.druid.util.StringUtils;
 import io.toya.entity.User;
 import io.toya.request.RegisterRequest;
 import io.toya.service.UserService;
@@ -11,7 +12,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -101,6 +106,10 @@ public class UserController {
             redirectAttributes.addFlashAttribute("message", "两次密码不一样");
             return "redirect:/user/register-form";
         }
+        if (StringUtils.isEmpty(registerRequest.getUsername())) {
+            redirectAttributes.addFlashAttribute("message", "用户名为空");
+            return "redirect:/user/register-form";
+        }
         User user = userService.getByUsername(registerRequest.getUsername());
         if (user != null) {
             redirectAttributes.addFlashAttribute("message", "用户名已存在");
@@ -144,12 +153,14 @@ public class UserController {
                                  @RequestParam("newPassword") String newPassword,
                                  @RequestParam("newPasswordTwo") String newPasswordTwo,
                                  Model model,
-                                 RedirectAttributes redirectAttributes) {
+                                 HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 RedirectAttributes redirectAttributes) throws ServletException, IOException {
         model.addAttribute("username", username);
         model.addAttribute("question", question);
         if (!newPassword.equals(newPasswordTwo)) {
             redirectAttributes.addFlashAttribute("message", "两次密码不一样");
-            return "redirect:/user/edit-password-two";
+            return "redirect:/user/edit-password";
         }
 
         User user = userService.getByUsername(username);
@@ -159,12 +170,12 @@ public class UserController {
         }
         if (!user.getAnswer().equals(answer)) {
             redirectAttributes.addFlashAttribute("message", "答案不正确");
-            return "redirect:/user/edit-password-two";
+            return "redirect:/user/edit-password";
         }
+
         user.setPassword(newPassword);
         user.setCreateTime(null);
         userService.update(user);
-
         redirectAttributes.addFlashAttribute("message", "密码修改成功");
 
         return "redirect:/user/login-form";
