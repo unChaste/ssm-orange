@@ -12,11 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -153,9 +149,7 @@ public class UserController {
                                  @RequestParam("newPassword") String newPassword,
                                  @RequestParam("newPasswordTwo") String newPasswordTwo,
                                  Model model,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response,
-                                 RedirectAttributes redirectAttributes) throws ServletException, IOException {
+                                 RedirectAttributes redirectAttributes) {
         model.addAttribute("username", username);
         model.addAttribute("question", question);
         if (!newPassword.equals(newPasswordTwo)) {
