@@ -1,6 +1,7 @@
 package io.toya.controller;
 
 import io.toya.entity.User;
+import io.toya.request.RegisterRequest;
 import io.toya.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -87,6 +88,86 @@ public class UserController {
 
         session.setAttribute("user", user);
         return "redirect:/test/hello";
+    }
+
+    @RequestMapping(value = "/register-form", method = RequestMethod.GET)
+    public String registerForm() {
+        return "user/registerForm";
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String register(RegisterRequest registerRequest, RedirectAttributes redirectAttributes) {
+        if (!registerRequest.getPassword().equals(registerRequest.getPasswordTwo())) {
+            redirectAttributes.addFlashAttribute("message", "两次密码不一样");
+            return "redirect:/user/register-form";
+        }
+        User user = userService.getByUsername(registerRequest.getUsername());
+        if (user != null) {
+            redirectAttributes.addFlashAttribute("message", "用户名已存在");
+            return "redirect:/user/register-form";
+        }
+        user = new User();
+        user.setUsername(registerRequest.getUsername());
+        user.setPassword(registerRequest.getPassword());
+        user.setNickname(registerRequest.getNickname());
+        user.setGender(registerRequest.getGender());
+        user.setQuestion(registerRequest.getQuestion());
+        user.setAnswer(registerRequest.getAnswer());
+        userService.save(user);
+
+        redirectAttributes.addFlashAttribute("message", "注册成功");
+
+        return "redirect:/user/login-form";
+    }
+
+    @RequestMapping(value = "/edit-password", method = RequestMethod.GET)
+    public String editPassword() {
+        return "user/editPassword";
+    }
+
+    @RequestMapping(value = "/edit-password-two", method = RequestMethod.GET)
+    public String editPasswordTwo(String username, Model model, RedirectAttributes redirectAttributes) {
+        User user = userService.getByUsername(username);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("message", "用户名不存在");
+            return "redirect:/user/edit-password";
+        }
+        model.addAttribute("username", username);
+        model.addAttribute("question", user.getQuestion());
+        return "user/editPasswordTwo";
+    }
+
+    @RequestMapping(value = "/update-password", method = RequestMethod.POST)
+    public String updatePassword(@RequestParam("username") String username,
+                                 @RequestParam("question") String question,
+                                 @RequestParam("answer") String answer,
+                                 @RequestParam("newPassword") String newPassword,
+                                 @RequestParam("newPasswordTwo") String newPasswordTwo,
+                                 Model model,
+                                 RedirectAttributes redirectAttributes) {
+        model.addAttribute("username", username);
+        model.addAttribute("question", question);
+        if (!newPassword.equals(newPasswordTwo)) {
+            redirectAttributes.addFlashAttribute("message", "两次密码不一样");
+            return "redirect:/user/edit-password-two";
+        }
+
+        User user = userService.getByUsername(username);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("message", "用户名不存在");
+            return "redirect:/user/edit-password";
+        }
+        if (!user.getAnswer().equals(answer)) {
+            redirectAttributes.addFlashAttribute("message", "答案不正确");
+            return "redirect:/user/edit-password-two";
+        }
+        user.setPassword(newPassword);
+        user.setCreateTime(null);
+        userService.update(user);
+
+        redirectAttributes.addFlashAttribute("message", "密码修改成功");
+
+        return "redirect:/user/login-form";
     }
 
 }

@@ -8,6 +8,8 @@ public class User {
     private String password;
     private String nickname;
     private Integer gender;
+    private String question;
+    private String answer;
     private Date createTime;
     private Date updateTime;
 
@@ -67,6 +69,22 @@ public class User {
         this.updateTime = updateTime;
     }
 
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -75,6 +93,8 @@ public class User {
                 ", password='" + password + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", gender=" + gender +
+                ", question='" + question + '\'' +
+                ", answer='" + answer + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';
