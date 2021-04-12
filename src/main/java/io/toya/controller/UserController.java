@@ -153,18 +153,18 @@ public class UserController {
         model.addAttribute("username", username);
         model.addAttribute("question", question);
         if (!newPassword.equals(newPasswordTwo)) {
-            redirectAttributes.addFlashAttribute("message", "两次密码不一样");
-            return "redirect:/user/edit-password";
+            model.addAttribute("message", "两次密码不一样");
+            return "user/editPasswordTwo";
         }
 
         User user = userService.getByUsername(username);
         if (user == null) {
             redirectAttributes.addFlashAttribute("message", "用户名不存在");
-            return "redirect:/user/edit-password";
+            return "redirect:/user/editPassword";
         }
         if (!user.getAnswer().equals(answer)) {
-            redirectAttributes.addFlashAttribute("message", "答案不正确");
-            return "redirect:/user/edit-password";
+            model.addAttribute("message", "答案不正确");
+            return "user/editPasswordTwo";
         }
 
         user.setPassword(newPassword);
