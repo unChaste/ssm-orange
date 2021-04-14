@@ -88,7 +88,7 @@ public class UserController {
         }
 
         session.setAttribute("user", user);
-        return "redirect:/test/hello";
+        return "redirect:/mood/list";
     }
 
     @RequestMapping(value = "/register-form", method = RequestMethod.GET)

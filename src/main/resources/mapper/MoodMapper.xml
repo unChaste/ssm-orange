@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.toya.dao.MoodDao">
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true">
+        insert into mood (userId, content, createTime, updateTime)
+        value(#{userId}, #{content}, now(), now())
+    </insert>
+    <select id="list" resultType="io.toya.response.MoodListResponse">
+        select mood.id moodId, nickname userNickname, content, mood.createTime
+        from mood
+        join user on user.id = mood.userId
+    </select>
+    <select id="countOfPraiseOfMood" resultType="java.lang.Integer">
+        select count(1) from mood_praise where moodId = #{moodId}
+    </select>
+    <select id="countOfPraiseOfMoodByUserId" resultType="java.lang.Integer">
+        select count(1) from mood_praise where moodId = #{moodId} and userId = #{userId}
+    </select>
+</mapper>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.toya.dao.MoodPraiseDao">
+    <insert id="praise">
+        insert into mood_praise (moodId, userId, createTime, updateTime) value (#{moodId}, #{userId}, now(), now())
+    </insert>
+    <delete id="unpraise">
+        delete from mood_praise where moodId = #{moodId} and userId = #{userId}
+    </delete>
+    <select id="getByMoodIdAndUserId" resultType="io.toya.entity.MoodPraise">
+        select * from mood_praise where moodId = #{moodId} and userId = #{userId}
+    </select>
+</mapper>
